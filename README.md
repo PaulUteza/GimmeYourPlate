@@ -6,7 +6,7 @@ Plates Detection using object detection and Optical Character Recognition deploy
 Install required libraries :
 
 ``` 
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 Run using :
