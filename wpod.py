@@ -27,7 +27,7 @@ class Label:
 
     def __str__(self):
         return 'Class: %d, top left(x: %f, y: %f), bottom right(x: %f, y: %f)' % (
-        self.__cl, self.__tl[0], self.__tl[1], self.__br[0], self.__br[1])
+            self.__cl, self.__tl[0], self.__tl[1], self.__br[0], self.__br[1])
 
     def copy(self):
         return Label(self.__cl, self.__tl, self.__br)
@@ -67,6 +67,7 @@ class Label:
     def set_prob(self, prob):
         self.__prob = prob
 
+
 class DLabel(Label):
     def __init__(self, cl, pts, prob):
         self.pts = pts
@@ -74,26 +75,30 @@ class DLabel(Label):
         br = np.amax(pts, axis=1)
         Label.__init__(self, cl, tl, br, prob)
 
+
 def getWH(shape):
     return np.array(shape[1::-1]).astype(float)
+
 
 def IOU(tl1, br1, tl2, br2):
     wh1, wh2 = br1-tl1, br2-tl2
     assert((wh1 >= 0).all() and (wh2 >= 0).all())
-    
+
     intersection_wh = np.maximum(np.minimum(br1, br2) - np.maximum(tl1, tl2), 0)
     intersection_area = np.prod(intersection_wh)
     area1, area2 = (np.prod(wh1), np.prod(wh2))
     union_area = area1 + area2 - intersection_area
     return intersection_area/union_area
 
+
 def IOU_labels(l1, l2):
     return IOU(l1.tl(), l1.br(), l2.tl(), l2.br())
+
 
 def nms(Labels, iou_threshold=0.5):
     SelectedLabels = []
     Labels.sort(key=lambda l: l.prob(), reverse=True)
-    
+
     for label in Labels:
         non_overlap = True
         for sel_label in SelectedLabels:
@@ -106,14 +111,13 @@ def nms(Labels, iou_threshold=0.5):
     return SelectedLabels
 
 
-
 def find_T_matrix(pts, t_pts):
     A = np.zeros((8, 9))
     for i in range(0, 4):
         xi = pts[:, i]
         xil = t_pts[:, i]
         xi = xi.T
-        
+
         A[i*2, 3:6] = -xil[2]*xi
         A[i*2, 6:] = xil[1]*xi
         A[i*2+1, :3] = xil[2]*xi
@@ -123,14 +127,17 @@ def find_T_matrix(pts, t_pts):
     H = V[-1, :].reshape((3, 3))
     return H
 
+
 def getRectPts(tlx, tly, brx, bry):
     return np.matrix([[tlx, brx, brx, tlx], [tly, tly, bry, bry], [1, 1, 1, 1]], dtype=float)
+
 
 def normal(pts, side, mn, MN):
     pts_MN_center_mn = pts * side
     pts_MN = pts_MN_center_mn + mn.reshape((2, 1))
     pts_prop = pts_MN / MN.reshape((2, 1))
     return pts_prop
+
 
 # Reconstruction function from predict value into plate crpoped from image
 def reconstruct(I, Iresized, Yr, lp_threshold):
@@ -180,7 +187,7 @@ def reconstruct(I, Iresized, Yr, lp_threshold):
 
         labels.append(DLabel(0, pts_prop, prob))
         labels_frontal.append(DLabel(0, frontal, prob))
-        
+
     final_labels = nms(labels, 0.1)
     final_labels_frontal = nms(labels_frontal, 0.1)
 
@@ -203,6 +210,7 @@ def reconstruct(I, Iresized, Yr, lp_threshold):
             Cor.append(ptsh)
     return final_labels, TLp, lp_type, Cor
 
+
 def detect_lp(model, I, max_dim, lp_threshold):
     min_dim_img = min(I.shape[:2])
     factor = float(max_dim) / min_dim_img
@@ -212,10 +220,8 @@ def detect_lp(model, I, max_dim, lp_threshold):
     T = T.reshape((1, T.shape[0], T.shape[1], T.shape[2]))
     Yr = model.predict(T)
     Yr = np.squeeze(Yr)
-    #print(Yr.shape)
     L, TLp, lp_type, Cor = reconstruct(I, Iresized, Yr, lp_threshold)
     return L, TLp, lp_type, Cor
-
 
 
 def preprocess_image(img,resize=False):
@@ -235,29 +241,32 @@ def get_plate(img,wpod_net, Dmax=608, Dmin=256):
     return LpImg, cor
 
 
-
-def draw_box(image_path, cor, thickness=3): 
-    pts=[]  
-    x_coordinates=cor[0][0]
-    y_coordinates=cor[0][1]
-    # store the top-left, top-right, bottom-left, bottom-right 
-    # of the plate license respectively
-    for i in range(4):
-        pts.append([int(x_coordinates[i]),int(y_coordinates[i])])
-    
-    pts = np.array(pts, np.int32)
-    pts = pts.reshape((-1,1,2))
+def draw_box(image_path, cords, thickness=1):
     vehicle_image = preprocess_image(image_path)
-    
-    cv2.polylines(vehicle_image,[pts],True,(255,0,0),thickness)
+    for cord in cords:
+        pts=[]
+        x_coordinates=cord[0]
+        y_coordinates=cord[1]
+        # store the top-left, top-right, bottom-left, bottom-right
+        # of the plate license respectively
+        for i in range(4):
+            pts.append([int(x_coordinates[i]),int(y_coordinates[i])])
+
+        pts = np.array(pts, np.int32)
+        pts = pts.reshape((-1,1,2))
+
+        cv2.polylines(vehicle_image,[pts],True,(255,0,0),thickness)
     return vehicle_image
 
 
-def make_prediction(img, MODEL_PATH,dmin):
-  wpod_net = load_model(MODEL_PATH)
-  LpImg,cor = get_plate(img, wpod_net,Dmin=dmin)
-  print("Detect %i plate(s) in"%len(LpImg))
-  plt.imshow(draw_box(img,cor))
-  return LpImg
+def make_prediction(img, MODEL_PATH, dmin):
+    wpod_net = load_model(MODEL_PATH)
+    LpImg, cords = get_plate(img, wpod_net, Dmin=dmin)
+    print("Detect %i plate(s) in" % len(LpImg))
+    fig, ax = plt.subplots()
+    plt.axis('off')
+    img = img[..., ::-1]
+    ax = plt.imshow(draw_box(img, cords))
+    return fig, LpImg
 
 

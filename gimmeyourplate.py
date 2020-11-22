@@ -6,13 +6,12 @@ import wpod
 import supervisely
 from PIL import Image
 import numpy as np
-import cv2
 
-import os
 PAGE_CONFIG = {"page_title":"StColab.io","page_icon":":smiley:","layout":"centered"}
 st.set_page_config(**PAGE_CONFIG)
 
 MODEL_PATH = 'anpr_models/'
+
 
 def create_read_plate():
 	img_file_buffer = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
@@ -28,7 +27,8 @@ def create_read_plate():
 			assertion_raised = False
 			while plates is None and not assertion_raised:
 				try:
-					plates = wpod.make_prediction(image, wpod_model, dmin_value)
+					box_image, plates = wpod.make_prediction(image, wpod_model, dmin_value)
+					st.pyplot(box_image)
 					for plate in plates:
 						plate = plate[..., ::-1]
 						st.image(plate)
@@ -38,7 +38,8 @@ def create_read_plate():
 
 		else:
 			supervisely_model = MODEL_PATH + 'supervisely/model'
-			plates = supervisely.make_prediction(image, supervisely_model)
+			box_image, plates = supervisely.make_prediction(image, supervisely_model)
+			st.pyplot(box_image)
 			plates = np.array(plates)
 			st.image(plates, use_column_width=True)
 
