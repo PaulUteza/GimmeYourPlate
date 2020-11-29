@@ -7,12 +7,14 @@ Original file is located at
     https://colab.research.google.com/drive/1fzf76plmwnEjjMfBSeo5vd3bDOgXTKY2
 """
 
-
+import keras
 import tensorflow.compat.v1 as tf
 import cv2
-from tensorflow.compat.v1.keras.models  import load_model
+from keras.models import load_model
 import numpy as np
 import itertools
+
+tf.disable_eager_execution()
 
 letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
            'M', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -30,29 +32,35 @@ def decode_batch(out):
         ret.append(outstr)
     return ret
 
-def ocr_prediction(img, model):
+def ocr_prediction(img):
 
   img = img.astype(np.float32)
-  img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+  if len(img.shape) == 3:
+      img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
   img = cv2.resize(img, (128, 64))
   img /= 255
   img = img.T
   img = np.expand_dims(img, -1)
   img = np.expand_dims(img, 0)
-  X_data = img
-  sess = tf.compat.v1.Session()
-  tf.compat.v1.keras.backend.set_session(sess)
-  net_inp = model.get_layer(name='the_input').input
-  net_out = model.get_layer(name='softmax').output
-  net_out_value = sess.run(net_out, feed_dict={net_inp:X_data})
-  pred_text = decode_batch(net_out_value)
-  sess.close()
+
+  g = tf.Graph()
+  with g.as_default():
+      X_data = img
+      model = load_model('anpr_models/anprocr2.h5', compile=False)
+      sess = tf.Session()
+      init = tf.global_variables_initializer()
+      sess.run(init)
+      tf.compat.v1.keras.backend.set_session(sess)
+      net_inp = model.get_layer(name='the_input').input.ref()
+      net_out = model.get_layer(name='softmax').output
+      net_out_value = sess.run(net_out, feed_dict={net_inp.deref():X_data})
+      pred_text = decode_batch(net_out_value)
+      sess.close()
   return pred_text
 
 
 def make_predictions(img):
   # tf.compat.v1.disable_eager_execution()
 
-  modelocr = load_model('anpr_models/anprocr2.h5', compile=False)
-  pred_text = ocr_prediction(img, modelocr)
+  pred_text = ocr_prediction(img)
   return pred_text

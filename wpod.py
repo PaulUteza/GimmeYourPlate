@@ -5,6 +5,9 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.compat.v1.keras.models import model_from_json
+import tensorflow.compat.v1 as tf
+
+# tf.enable_eager_execution()
 
 
 def load_model(path):

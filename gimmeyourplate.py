@@ -31,8 +31,8 @@ def create_read_plate():
 					box_image, plates = wpod.make_prediction(image, wpod_model, dmin_value)
 					st.pyplot(box_image)
 					for plate in plates:
-						plate = plate[..., ::-1]
-						st.image(plate)
+						plate_to_show = plate[..., ::-1]
+						st.image(plate_to_show)
 						ocr_plate = anpr_ocr_prediction.make_predictions(plate)
 						st.write(ocr_plate[0])
 				except AssertionError:
