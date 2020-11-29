@@ -115,6 +115,7 @@ def result(to_predict, x, y, height, width):
 
 
 def make_prediction(img, MODEL_PATH):
+    tf.enable_eager_execution()
     to_predict = preprocess(img)
     x_img = to_predict.shape[0]
     y_img = to_predict.shape[1]

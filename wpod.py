@@ -4,9 +4,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from os.path import splitext,basename
-from tensorflow.compat.v1 .keras.models import model_from_json
-import os
+from tensorflow.compat.v1.keras.models import model_from_json
 
 
 def load_model(path):

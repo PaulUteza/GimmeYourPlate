@@ -4,10 +4,11 @@
 import streamlit as st
 import wpod
 import supervisely
+import anpr_ocr_prediction
 from PIL import Image
 import numpy as np
 
-PAGE_CONFIG = {"page_title":"StColab.io","page_icon":":smiley:","layout":"centered"}
+PAGE_CONFIG = {"page_title":"Gimme Your Plate","page_icon":":smiley:","layout":"centered"}
 st.set_page_config(**PAGE_CONFIG)
 
 MODEL_PATH = 'anpr_models/'
@@ -32,8 +33,10 @@ def create_read_plate():
 					for plate in plates:
 						plate = plate[..., ::-1]
 						st.image(plate)
+						ocr_plate = anpr_ocr_prediction.make_predictions(plate)
+						st.write(ocr_plate[0])
 				except AssertionError:
-					st.write('No plate detected ! Try to adjust the Dmin value.')
+					st.write('No plate detected ! Try to adjust the value.')
 					assertion_raised = True
 
 		else:
@@ -42,14 +45,14 @@ def create_read_plate():
 			st.pyplot(box_image)
 			plates = np.array(plates)
 			st.image(plates, use_column_width=True)
+			ocr_plate = anpr_ocr_prediction.make_predictions(plates)
+			st.write(ocr_plate[0])
 
 def main():
 	st.title("Artificial Intelligence Project")
 	st.subheader("Plates Detection using object detection and Optical Character Recognition")
-	menu = ["Home","About",'Read a plate', 'Handwritten recognition']
+	menu = ['Read a plate', 'Handwritten recognition',"About"]
 	choice = st.sidebar.selectbox('Menu',menu)
-	if choice == 'Home':
-		st.subheader("Artificial Intelligence")
 	if choice == 'Read a plate':
 		create_read_plate()
 if __name__ == '__main__':
