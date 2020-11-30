@@ -18,8 +18,8 @@ MODEL_PATH = 'anpr_models/'
 def create_read_plate():
 	img_file_buffer_plate = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
 	if img_file_buffer_plate is not None:
-		image = np.array(Image.open(img_file_buffer_plate))
-		st.image(image, use_column_width=True)
+		image_plate = np.array(Image.open(img_file_buffer_plate))
+		st.image(image_plate, use_column_width=True)
 		model = ['WPOD-NET', 'SUPERVISELY']
 		model_choice = st.selectbox('Choose the model :', model)
 		plates = None
@@ -29,7 +29,7 @@ def create_read_plate():
 			assertion_raised = False
 			while plates is None and not assertion_raised:
 				try:
-					box_image, plates = wpod.make_prediction(image, wpod_model, dmin_value)
+					box_image, plates = wpod.make_prediction(image_plate, wpod_model, dmin_value)
 					st.pyplot(box_image)
 					for plate in plates:
 						plate_to_show = plate[..., ::-1]
@@ -42,7 +42,7 @@ def create_read_plate():
 
 		else:
 			supervisely_model = MODEL_PATH + 'supervisely/model'
-			box_image, plates = supervisely.make_prediction(image, supervisely_model)
+			box_image, plates = supervisely.make_prediction(image_plate, supervisely_model)
 			st.pyplot(box_image)
 			plates = np.array(plates)
 			st.image(plates, use_column_width=True)
@@ -53,9 +53,9 @@ def create_read_plate():
 def create_handwritten():
 	img_file_buffer_handwritten = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
 	if img_file_buffer_handwritten is not None:
-		image = np.array(Image.open(img_file_buffer_handwritten))
-		st.image(image, use_column_width=True)
-		fig, no_spell, with_spell = handwritten.make_predict(image)
+		image_handwritten = np.array(Image.open(img_file_buffer_handwritten))
+		st.image(image_handwritten, use_column_width=True)
+		fig, no_spell, with_spell = handwritten.make_predict(image_handwritten)
 		st.write('Word segmentation :')
 		st.pyplot(fig)
 		st.write('Without Spell : '+no_spell)
