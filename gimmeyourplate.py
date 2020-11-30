@@ -6,6 +6,7 @@ import wpod
 import supervisely
 import anpr_ocr_prediction
 import handwritten
+import plate_ocr
 from PIL import Image
 import numpy as np
 
@@ -23,8 +24,11 @@ def create_read_plate():
 		st.image(image_plate, use_column_width=True)
 		model = ['WPOD-NET', 'SUPERVISELY']
 		model_choice = st.selectbox('Choose the model :', model)
+		model_ocr = ['OpenCV&MobileNet', 'SUPERVISELY']
+		model_ocr_choice = st.selectbox('Choose the OCR model :', model_ocr)
 		plates = None
 		if model_choice == 'WPOD-NET':
+
 			wpod_model = MODEL_PATH + 'wpod/wpod-net'
 			dmin_value = st.slider("Adjust this value for a better detection", 100, 1000, 256)
 			assertion_raised = False
@@ -35,9 +39,14 @@ def create_read_plate():
 					for plate in plates:
 						plate_to_show = plate[..., ::-1]
 						st.image(plate_to_show)
-						ocr_plate = anpr_ocr_prediction.make_predictions(plate)
+						if model_ocr_choice == 'OpenCV&MobileNet':
+							ocr_plate, segmented_plot = plate_ocr.make_predictions(plate)
+							st.pyplot(segmented_plot)
+						if model_ocr_choice == 'SUPERVISELY':
+							ocr_plate = anpr_ocr_prediction.make_predictions(plate)
+							ocr_plate = ocr_plate[0]
 						print(ocr_plate)
-						st.write('Predicted plate : ' + str(ocr_plate[0]))
+						st.write('Predicted plate : ' + str(ocr_plate))
 				except AssertionError:
 					st.write('No plate detected ! Try to adjust the value.')
 					assertion_raised = True
@@ -48,7 +57,12 @@ def create_read_plate():
 			st.pyplot(box_image)
 			plates = np.array(plates)
 			st.image(plates, use_column_width=True)
-			ocr_plate = anpr_ocr_prediction.make_predictions(plates)
+			if model_ocr_choice == 'OpenCV&MobileNet':
+				ocr_plate, segmented_plot = plate_ocr.make_predictions(plates)
+				st.pyplot(segmented_plot)
+			if model_ocr_choice == 'SUPERVISELY':
+				ocr_plate = anpr_ocr_prediction.make_predictions(plates)
+				ocr_plate = ocr_plate[0]
 			st.write(ocr_plate[0])
 
 
