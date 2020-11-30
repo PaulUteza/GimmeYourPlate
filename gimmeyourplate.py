@@ -36,7 +36,7 @@ def create_read_plate():
 						if len(plate.shape) == 3:
 							plate_to_show = plate[..., ::-1]
 						else:
-							plate_to_show = plate
+							plate_to_show = np.fliplr(plate)
 						st.image(plate_to_show)
 						ocr_plate = anpr_ocr_prediction.make_predictions(plate)
 						st.write(ocr_plate[0])
