@@ -63,7 +63,7 @@ def create_read_plate():
 			if model_ocr_choice == 'SUPERVISELY':
 				ocr_plate = anpr_ocr_prediction.make_predictions(plates)
 				ocr_plate = ocr_plate[0]
-			st.write(ocr_plate[0])
+			st.write(ocr_plate)
 
 
 def create_handwritten():
