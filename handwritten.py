@@ -23,16 +23,6 @@ word_cfg = {
     'img_h': 64
 }
 
-line_cfg = {
-    'batch_size': 16,
-    'input_length': 98,
-    'model_name': 'iam_line',
-    'max_text_len': 74,
-    'img_w': 800,
-    'img_h': 64
-}
-
-
 def add_padding(img, old_w, old_h, new_w, new_h):
     h1, h2 = int((new_h-old_h)/2), int((new_h-old_h)/2)+old_h
     w1, w2 = int((new_w-old_w)/2), int((new_w-old_w)/2)+old_w
@@ -235,10 +225,7 @@ def decode_batch(out):
 
 
 def predict_image(model_predict, path, is_word):
-    if is_word:
-        width = word_cfg['img_w']
-    else:
-        width = line_cfg['img_w']
+    width = word_cfg['img_w']
     img = preprocess(path, width, 64)
     img = img.T
     if K.image_data_format() == 'channels_first':
