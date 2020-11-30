@@ -16,6 +16,7 @@ MODEL_PATH = 'anpr_models/'
 
 
 def create_read_plate():
+	st.subheader("Detect license plate in the wild")
 	img_file_buffer_plate = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
 	if img_file_buffer_plate is not None:
 		image_plate = np.array(Image.open(img_file_buffer_plate))
@@ -51,6 +52,7 @@ def create_read_plate():
 
 
 def create_handwritten():
+	st.subheader("Word recognition of handwritten text")
 	img_file_buffer_handwritten = st.file_uploader("Upload an image with handwritten text", type=["png", "jpg", "jpeg"])
 	if img_file_buffer_handwritten is not None:
 		image_handwritten = np.array(Image.open(img_file_buffer_handwritten))
@@ -61,21 +63,30 @@ def create_handwritten():
 		st.write('Without Spell : '+no_spell)
 		st.write('With Spell : '+with_spell)
 
+
+def create_about():
+
+	st.markdown('## Artificial Intelligence Project')
+
+	st.markdown('### This project was created by Laurent Feroldi, Marcel Mounsi, Rayhane Talbi, Paul Uteza.')
+
+	st.markdown('Link to the GitHub repository can be found [here](https://github.com/PaulUteza/GimmeYourPlate)')
+
+
+
+
 def main():
-	st.title("Artificial Intelligence Project")
-	st.subheader("Plates Detection using object detection and Handwritting recognition")
-	menu = ['Read a plate', 'Handwritting recognition',"About"]
+	st.title("Gimme Your Plate")
+	menu = ['Read a plate', 'Handwriting recognition',"About"]
 	choice = st.sidebar.selectbox('Menu',menu)
 	image_plate = None
 	image_handwritten = None
 	if choice == 'Read a plate':
-		if image_plate is not None:
-			image_plate = None
 		create_read_plate()
-	if choice =='Handwritting recognition':
-		if image_handwritten is not None:
-			image_handwritten = None
+	if choice =='Handwriting recognition':
 		create_handwritten()
+	if choice == 'About':
+		create_about()
 
 if __name__ == '__main__':
 	main()

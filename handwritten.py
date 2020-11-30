@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -8,7 +7,6 @@ from keras.models import model_from_json
 import shutil
 import itertools
 from keras import backend as K
-from keras.utils import plot_model
 import re
 from collections import Counter
 
@@ -17,21 +15,21 @@ letters = [' ', '!', '"', '#', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/',
 num_classes = len(letters) + 1
 
 word_cfg = {
-	'batch_size': 64,
-	'input_length': 30,
-	'model_name': 'iam_words',
-	'max_text_len': 16,
-	'img_w': 128,
-	'img_h': 64
+    'batch_size': 64,
+    'input_length': 30,
+    'model_name': 'iam_words',
+    'max_text_len': 16,
+    'img_w': 128,
+    'img_h': 64
 }
 
 line_cfg = {
-	'batch_size': 16,
-	'input_length': 98,
-	'model_name': 'iam_line',
-	'max_text_len': 74,
-	'img_w': 800,
-	'img_h': 64
+    'batch_size': 16,
+    'input_length': 98,
+    'model_name': 'iam_line',
+    'max_text_len': 74,
+    'img_w': 800,
+    'img_h': 64
 }
 
 
@@ -139,13 +137,13 @@ def edits2(word):
 
 
 def prepareImg(img, height):
-	"""convert given image to grayscale image (if needed) and resize to desired height"""
-	assert img.ndim in (2, 3)
-	if img.ndim == 3:
-		img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	h = img.shape[0]
-	factor = height / h
-	return cv2.resize(img, dsize=None, fx=factor, fy=factor)
+    """convert given image to grayscale image (if needed) and resize to desired height"""
+    assert img.ndim in (2, 3)
+    if img.ndim == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    h = img.shape[0]
+    factor = height / h
+    return cv2.resize(img, dsize=None, fx=factor, fy=factor)
 
 
 def createKernel(kernelSize, sigma, theta):
@@ -255,19 +253,19 @@ def predict_image(model_predict, path, is_word):
 
 def make_predict(img):
     with open('anpr_models/handwritten/word_model_predict.json', 'r') as f:
-            w_model_predict = model_from_json(f.read())
+        w_model_predict = model_from_json(f.read())
     w_model_predict.load_weights('anpr_models/handwritten/iam_words--20--1.425.h5')
     img = prepareImg(img, 64)
     img2 = img.copy()
     res = wordSegmentation(img, kernelSize=25, sigma=11, theta=7, minArea=100)
     if not os.path.exists('tmp'):
-            os.mkdir('tmp')
+        os.mkdir('tmp')
 
     for (j, w) in enumerate(res):
-      (wordBox, wordImg) = w
-      (x, y, w, h) = wordBox
-      cv2.imwrite('tmp/%d.png'%j, wordImg)
-      cv2.rectangle(img2,(x,y),(x+w,y+h),(0,255,0),1) # draw bounding box in summary image
+        (wordBox, wordImg) = w
+        (x, y, w, h) = wordBox
+        cv2.imwrite('tmp/%d.png'%j, wordImg)
+        cv2.rectangle(img2,(x,y),(x+w,y+h),(0,255,0),1) # draw bounding box in summary image
 
     cv2.imwrite('ocr/summary.png', img2)
     fig, ax = plt.subplots()
@@ -277,7 +275,7 @@ def make_predict(img):
     imgFiles = sorted(imgFiles)
     pred_line = []
     for f in imgFiles:
-      pred_line.append(predict_image(w_model_predict, 'tmp/'+f, True))
+        pred_line.append(predict_image(w_model_predict, 'tmp/'+f, True))
     pred_line_spell = correction_list(pred_line)
     shutil.rmtree('tmp/')
     return fig," ".join(pred_line), " ".join(pred_line_spell)
