@@ -16,9 +16,9 @@ MODEL_PATH = 'anpr_models/'
 
 
 def create_read_plate():
-	img_file_buffer = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
-	if img_file_buffer is not None:
-		image = np.array(Image.open(img_file_buffer))
+	img_file_buffer_plate = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
+	if img_file_buffer_plate is not None:
+		image = np.array(Image.open(img_file_buffer_plate))
 		st.image(image, use_column_width=True)
 		model = ['WPOD-NET', 'SUPERVISELY']
 		model_choice = st.selectbox('Choose the model :', model)
@@ -51,9 +51,9 @@ def create_read_plate():
 
 
 def create_handwritten():
-	img_file_buffer = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
-	if img_file_buffer is not None:
-		image = np.array(Image.open(img_file_buffer))
+	img_file_buffer_handwritten = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
+	if img_file_buffer_handwritten is not None:
+		image = np.array(Image.open(img_file_buffer_handwritten))
 		st.image(image, use_column_width=True)
 		fig, no_spell, with_spell = handwritten.make_predict(image)
 		st.write('Word segmentation :')
