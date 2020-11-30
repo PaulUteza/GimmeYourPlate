@@ -68,7 +68,7 @@ def main():
 	choice = st.sidebar.selectbox('Menu',menu)
 	if choice == 'Read a plate':
 		create_read_plate()
-	if choice =='Handwritten recognition':
+	if choice =='Handwritting recognition':
 		create_handwritten()
 
 if __name__ == '__main__':
