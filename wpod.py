@@ -266,7 +266,8 @@ def make_prediction(img, MODEL_PATH, dmin):
     print("Detect %i plate(s) in" % len(LpImg))
     fig, ax = plt.subplots()
     plt.axis('off')
-    img = img[..., ::-1]
+    if len(img.shape)==3:
+        img = img[..., ::-1]
     ax = plt.imshow(draw_box(img, cords))
     return fig, LpImg
 

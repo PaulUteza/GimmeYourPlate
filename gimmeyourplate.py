@@ -33,13 +33,11 @@ def create_read_plate():
 					box_image, plates = wpod.make_prediction(image_plate, wpod_model, dmin_value)
 					st.pyplot(box_image)
 					for plate in plates:
-						if len(plate.shape) == 3:
-							plate_to_show = plate[..., ::-1]
-						else:
-							plate_to_show = np.fliplr(plate)
+						plate_to_show = plate[..., ::-1]
 						st.image(plate_to_show)
 						ocr_plate = anpr_ocr_prediction.make_predictions(plate)
-						st.write(ocr_plate[0])
+						print(ocr_plate)
+						st.write('Predicted plate : ' + str(ocr_plate[0]))
 				except AssertionError:
 					st.write('No plate detected ! Try to adjust the value.')
 					assertion_raised = True
