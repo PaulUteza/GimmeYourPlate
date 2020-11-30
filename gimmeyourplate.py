@@ -66,6 +66,8 @@ def main():
 	st.subheader("Plates Detection using object detection and Handwritting recognition")
 	menu = ['Read a plate', 'Handwritting recognition',"About"]
 	choice = st.sidebar.selectbox('Menu',menu)
+	image_plate = None
+	image_handwritten = None
 	if choice == 'Read a plate':
 		if image_plate is not None:
 			image_plate = None
