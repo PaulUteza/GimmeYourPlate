@@ -5,6 +5,7 @@ import streamlit as st
 import wpod
 import supervisely
 import anpr_ocr_prediction
+import handwritten
 from PIL import Image
 import numpy as np
 
@@ -48,12 +49,27 @@ def create_read_plate():
 			ocr_plate = anpr_ocr_prediction.make_predictions(plates)
 			st.write(ocr_plate[0])
 
+
+def create_handwritten():
+	img_file_buffer = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
+	if img_file_buffer is not None:
+		image = np.array(Image.open(img_file_buffer))
+		st.image(image, use_column_width=True)
+		fig, no_spell, with_spell = handwritten.make_predict(image)
+		st.write('Word segmentation :')
+		st.pyplot(fig)
+		st.write('Without Spell : '+no_spell)
+		st.write('With Spell : '+with_spell)
+
 def main():
 	st.title("Artificial Intelligence Project")
-	st.subheader("Plates Detection using object detection and Optical Character Recognition")
-	menu = ['Read a plate', 'Handwritten recognition',"About"]
+	st.subheader("Plates Detection using object detection and Handwritting recognition")
+	menu = ['Read a plate', 'Handwritting recognition',"About"]
 	choice = st.sidebar.selectbox('Menu',menu)
 	if choice == 'Read a plate':
 		create_read_plate()
+	if choice =='Handwritten recognition':
+		create_handwritten()
+
 if __name__ == '__main__':
 	main()

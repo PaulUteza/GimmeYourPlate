@@ -16,8 +16,7 @@ import itertools
 
 tf.disable_eager_execution()
 
-letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-           'M', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+letters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'E', 'H', 'K', 'M', 'O', 'P', 'T', 'X', 'Y']
 
 
 def decode_batch(out):
@@ -46,7 +45,7 @@ def ocr_prediction(img):
   g = tf.Graph()
   with g.as_default():
       X_data = img
-      model = load_model('anpr_models/anprocr2.h5', compile=False)
+      model = load_model('anpr_models/ocr/anprocr2.h5', compile=False)
       sess = tf.Session()
       init = tf.global_variables_initializer()
       sess.run(init)
