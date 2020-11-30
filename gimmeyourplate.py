@@ -51,7 +51,7 @@ def create_read_plate():
 
 
 def create_handwritten():
-	img_file_buffer_handwritten = st.file_uploader("Upload an image with a plate in the box below", type=["png", "jpg", "jpeg"])
+	img_file_buffer_handwritten = st.file_uploader("Upload an image with handwritten text", type=["png", "jpg", "jpeg"])
 	if img_file_buffer_handwritten is not None:
 		image_handwritten = np.array(Image.open(img_file_buffer_handwritten))
 		st.image(image_handwritten, use_column_width=True)
