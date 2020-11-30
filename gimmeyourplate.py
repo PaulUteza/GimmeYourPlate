@@ -67,8 +67,12 @@ def main():
 	menu = ['Read a plate', 'Handwritting recognition',"About"]
 	choice = st.sidebar.selectbox('Menu',menu)
 	if choice == 'Read a plate':
+		if image_plate is not None:
+			image_plate = None
 		create_read_plate()
 	if choice =='Handwritting recognition':
+		if image_handwritten is not None:
+			image_handwritten = None
 		create_handwritten()
 
 if __name__ == '__main__':
