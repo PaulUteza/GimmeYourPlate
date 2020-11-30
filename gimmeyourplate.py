@@ -33,7 +33,10 @@ def create_read_plate():
 					box_image, plates = wpod.make_prediction(image_plate, wpod_model, dmin_value)
 					st.pyplot(box_image)
 					for plate in plates:
-						plate_to_show = plate[..., ::-1]
+						if len(plate.shape) == 3:
+							plate_to_show = plate[..., ::-1]
+						else:
+							plate_to_show = plate
 						st.image(plate_to_show)
 						ocr_plate = anpr_ocr_prediction.make_predictions(plate)
 						st.write(ocr_plate[0])
