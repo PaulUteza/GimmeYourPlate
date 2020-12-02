@@ -9,9 +9,12 @@ Install required libraries :
 pip install -r requirements.txt
 ```
 
-Run using :
+Run localy using :
 
 ```
 streamlit run gimmeyourplate.py
 ```
 
+Or go to the link :
+
+https://share.streamlit.io/pauluteza/gimmeyourplate/main/gimmeyourplate.py
