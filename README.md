@@ -18,3 +18,5 @@ streamlit run gimmeyourplate.py
 Or go to the link :
 
 https://share.streamlit.io/pauluteza/gimmeyourplate/main/gimmeyourplate.py
+
+Test images are given in /plate_img and /handwritten_img
